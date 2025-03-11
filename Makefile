@@ -1,2 +1,2 @@
-game: main.cpp Menu/menu.cpp
-	g++ main.cpp Menu/menu.cpp -o game -lncurses
+game: maintest.cpp Menu/Menu.cpp constants.cpp
+	g++ maintest.cpp Menu/Menu.cpp constants.cpp -o game -lncurses
