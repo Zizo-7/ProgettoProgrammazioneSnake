@@ -8,8 +8,8 @@ void Menu::visualizza_menu()
 {
     Menu::visualizza_grafica();
     mvprintw(35, 5, "Premi il tasto 's' per iniziare il gioco");
-    mvprintw(38, 5, "Premi il tasto 'q' per uscire");
-    mvprintw(41, 5, "Premi il tasto 't' per visualizzare i punteggi");
+    mvprintw(41, 5, "Premi il tasto 'q' per uscire");
+    mvprintw(38, 5, "Premi il tasto 't' per visualizzare i punteggi");
     refresh();
 }
 
