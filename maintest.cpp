@@ -24,6 +24,8 @@ int main()
     input.inserisci_nome();
     input.seleziona_livello();
 
+    getch();
+
     endwin();
     return 0;
 }
