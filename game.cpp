@@ -3,7 +3,8 @@
 #include <ncurses.h>
 #include <time.h>
 
-Game::Game() {
+Game::Game()
+{
     srand(time(NULL));
     initscr();
     noecho();
@@ -19,13 +20,15 @@ Game::Game() {
     wrefresh(board_win);
 }
 
-Game::~Game() {
+Game::~Game()
+{
     endwin();
 }
 
-void Game::run() {
+void Game::run()
+{
 
-    timeout(10);  // molto reattivo
+    timeout(10); // molto reattivo
     int tick = 0;
     int moveDelay = 8; // più basso = più veloce
     /*come ho fatto, la funzione timeout(10) -> ogni 10 ms fa un esecuzione, se timeout è 100 allora è troppo lento
@@ -35,16 +38,36 @@ void Game::run() {
      * 12: lento, 8 normale, 4 veloce, 2 rapidissima, 1 massima
      */
 
-    while (true) {
+    while (true)
+    {
         int ch = getch();
-        if (ch == 'q') break;
-        if (ch == KEY_UP && snake.dy == 0) { snake.dx = 0; snake.dy = -1; }
-        if (ch == KEY_DOWN && snake.dy == 0) { snake.dx = 0; snake.dy = 1; }
-        if (ch == KEY_LEFT && snake.dx == 0) { snake.dx = -1; snake.dy = 0; }
-        if (ch == KEY_RIGHT && snake.dx == 0) { snake.dx = 1; snake.dy = 0; }
+        if (ch == 'q')
+            break;
+        if (ch == KEY_UP && snake.dy == 0)
+        {
+            snake.dx = 0;
+            snake.dy = -1;
+        }
+        if (ch == KEY_DOWN && snake.dy == 0)
+        {
+            snake.dx = 0;
+            snake.dy = 1;
+        }
+        if (ch == KEY_LEFT && snake.dx == 0)
+        {
+            snake.dx = -1;
+            snake.dy = 0;
+        }
+        if (ch == KEY_RIGHT && snake.dx == 0)
+        {
+            snake.dx = 1;
+            snake.dy = 0;
+        }
 
-        if (tick % moveDelay == 0) {
-            if (snake.move(food.pos)) {
+        if (tick % moveDelay == 0)
+        {
+            if (snake.move(food.pos))
+            {
                 food.generate();
 
                 score++;
@@ -61,5 +84,4 @@ void Game::run() {
 
         tick++;
     }
-
 }

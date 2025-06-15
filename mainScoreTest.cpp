@@ -13,18 +13,19 @@ int main()
     cbreak();
 
     Score score;
-    /*
-        char mario[] = "Mario";
-        char luigi[] = "Luigi";
-        char peach[] = "Peach";
 
-        score.addScore(mario, 100);
-        score.addScore(luigi, 200);
-        score.addScore(peach, 150);
+    char mario[] = "Mario";
+    char luigi[] = "Luigi";
+    char peach[] = "Peach";
 
-        score.saveScoreInFile();
-    */
+    score.addScore(mario, 100);
+    score.addScore(luigi, 200);
+    score.addScore(peach, 150);
+
+    score.saveScoreInFile();
+
     score.readScoreFromFileAndSaveInScoreTable("scoretable.txt");
+    score.SortScoretable();
 
     cout << score.scoretablearray[9].score << "-------";
     getch();
