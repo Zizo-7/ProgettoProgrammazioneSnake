@@ -1,0 +1,65 @@
+#include <cstdlib>
+#include "game.hpp"
+#include <ncurses.h>
+#include <time.h>
+
+Game::Game() {
+    srand(time(NULL));
+    initscr();
+    noecho();
+    cbreak();
+    curs_set(FALSE);
+    keypad(stdscr, TRUE);
+    nodelay(stdscr, TRUE);
+    start_color();
+    init_pair(1, COLOR_RED, COLOR_BLACK);
+
+    board_win = newwin(HEIGHT, WIDTH, 15, 100);
+    box(board_win, 0, 0);
+    wrefresh(board_win);
+}
+
+Game::~Game() {
+    endwin();
+}
+
+void Game::run() {
+
+    timeout(10);  // molto reattivo
+    int tick = 0;
+    int moveDelay = 8; // più basso = più veloce
+    /*come ho fatto, la funzione timeout(10) -> ogni 10 ms fa un esecuzione, se timeout è 100 allora è troppo lento
+     * mentre se timeout è 10 ci sono troppi cicli e quindi a prescindere risulta lento
+     * usiamo un metodo con tick e move delay, dove tick conta i cicli, e ogni tot cicli (in base a move delay) verrà avviato un ciclo
+     * non usando questo modo, il codice va fuori controllo e risulta più lento di prima
+     * 12: lento, 8 normale, 4 veloce, 2 rapidissima, 1 massima
+     */
+
+    while (true) {
+        int ch = getch();
+        if (ch == 'q') break;
+        if (ch == KEY_UP && snake.dy == 0) { snake.dx = 0; snake.dy = -1; }
+        if (ch == KEY_DOWN && snake.dy == 0) { snake.dx = 0; snake.dy = 1; }
+        if (ch == KEY_LEFT && snake.dx == 0) { snake.dx = -1; snake.dy = 0; }
+        if (ch == KEY_RIGHT && snake.dx == 0) { snake.dx = 1; snake.dy = 0; }
+
+        if (tick % moveDelay == 0) {
+            if (snake.move(food.pos)) {
+                food.generate();
+
+                score++;
+            }
+
+            werase(board_win);
+            box(board_win, 0, 0);
+            food.draw(board_win);
+            snake.draw(board_win);
+            mvprintw(13, 100, "Score: %d", score);
+            wrefresh(board_win);
+            refresh();
+        }
+
+        tick++;
+    }
+
+}
