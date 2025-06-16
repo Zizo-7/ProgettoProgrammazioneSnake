@@ -1,5 +1,6 @@
 #ifndef GAME_H
 #define GAME_H
+#pragma once
 
 #include "Snake/snake.hpp"
 #include "Food/food.hpp"

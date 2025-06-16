@@ -1,15 +1,16 @@
 #ifndef FOOD_H
 #define FOOD_H
 
-#include "snake.hpp"  // Per usare Position
+#include "../Snake/snake.hpp" // Per usare Position
 
-class Food {
+class Food
+{
 public:
     Position pos;
 
     Food();
     void generate();
-    void draw(WINDOW* win) const;
+    void draw(WINDOW *win) const;
 };
 
 #endif
