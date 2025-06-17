@@ -26,6 +26,7 @@ public:
     void readScoreFromFileAndSaveInScoreTable(const std::string &filename); // Funzione per leggere i punteggi da un file e salvarli nella struttura
     void saveScoreInFile();
     void addScore(char name[], int punteggio); // Funzione per salvare i punteggi nell'array
+    void visualizzaClassifica();               // funzione per visualizzare la classifica
 };
 
 // sort()ordina, legge dal file e salva nella struttura ,  saveScoreInFile(); ho nome e score e salvo nella mia struct,

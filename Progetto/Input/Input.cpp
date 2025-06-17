@@ -32,3 +32,7 @@ void Input::seleziona_livello()
     wrefresh(inputwin);
     delwin(inputwin);
 }
+int Input::getLivello() const
+{
+    return this->livello;
+}

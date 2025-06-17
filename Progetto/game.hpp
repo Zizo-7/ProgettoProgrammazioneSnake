@@ -19,10 +19,11 @@ private:
     Food food;
     int score = 0;
     int delay = 100;
+    int moveDelay;
     WINDOW *board_win;
 
 public:
-    Game();
+    Game(int livello);
     ~Game();
     void run();
 };

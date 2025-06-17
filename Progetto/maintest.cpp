@@ -17,22 +17,38 @@ int main()
 
     // visualizzare il menu principale
     Menu menu;
-    menu.visualizza_menu();
-    getch();
+    char choice = menu.visualizza_menu();
+    if (choice == 'q')
+    {
+        endwin(); // Chiude ncurses se l'utente sceglie di uscire
+        return 0; // Esce dal programma
+    }
+    if (choice == 't')
+    {
+        Score score;
+        score.readScoreFromFileAndSaveInScoreTable("scoretable.txt");
+        score.visualizzaClassifica();
+        getch();
+        endwin(); // Chiude ncurses dopo la visualizzazione della classifica
+        return 0; // Esce dal programma
+    }
+    if (choice == 's')
+    {
+        wclear(stdscr);
+        refresh();
+        Input input; // chiedere nome e livello
 
-    wclear(stdscr);
-    refresh();
-    // chiedere nome e livello
-    Input input;
-    input.inserisci_nome();
-    input.seleziona_livello();
+        input.inserisci_nome();
+        input.seleziona_livello();
+        int livello = input.getLivello();
+        // visualizzare il livello selezionato
 
-    getch();
-    wclear(stdscr);
-    refresh();
+        wclear(stdscr);
+        refresh();
 
-    Game game;
-    game.run();
+        Game game(livello);
+        game.run();
+    }
 
     // Crea e avvia il timer (3 minuti di default)
     /* Timer timer;   // Crea timer di 3 minuti

@@ -4,13 +4,19 @@ Menu::Menu()
 {
 }
 
-void Menu::visualizza_menu()
+char Menu::visualizza_menu()
+
 {
     Menu::visualizza_grafica();
     mvprintw(35, 5, "Premi il tasto 's' per iniziare il gioco");
     mvprintw(41, 5, "Premi il tasto 'q' per uscire");
     mvprintw(38, 5, "Premi il tasto 't' per visualizzare i punteggi");
-    refresh();
+    char c;
+    c = getch();
+
+    return c;
+
+    // Ritorna il tasto premuto
 }
 
 void Menu::visualizza_grafica()

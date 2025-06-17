@@ -4,7 +4,7 @@
 
 class Input
 {
-protected:
+private:
     char nomeGiocatore[20];
     int livello;
 
@@ -12,4 +12,5 @@ public:
     Input();
     void inserisci_nome();
     void seleziona_livello();
+    int getLivello() const;
 };

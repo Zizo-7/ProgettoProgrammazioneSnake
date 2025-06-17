@@ -81,3 +81,15 @@ void Score::addScore(char name[], int punteggio)
     }
     SortScoretable(); // Ordina i punteggi dopo aver aggiunto il nuovo punteggio
 }
+// Funzione per visualizzare la classifica
+void Score::visualizzaClassifica()
+{
+    // Visualizza la classifica dei punteggi
+    clear();
+    mvprintw(0, 0, "Classifica:");
+    for (int i = 0; i < 10; i++)
+    {
+        mvprintw(i + 1, 0, "%d. %s - %d", i + 1, this->scoretablearray[i].nome, this->scoretablearray[i].score);
+    }
+    refresh();
+}

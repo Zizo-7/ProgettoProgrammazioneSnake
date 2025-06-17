@@ -12,5 +12,5 @@ private:
 public:
     Menu();
 
-    void visualizza_menu();
+    char visualizza_menu();
 };
