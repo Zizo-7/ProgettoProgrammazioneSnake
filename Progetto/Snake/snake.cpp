@@ -89,3 +89,12 @@ void Snake::changeDirection(int ch)
         dy = 0;
     }
 }
+bool Snake::hasCollidedWithSelf()
+{
+    for (int i = 1; i < length; ++i)
+    {
+        if (body[0].x == body[i].x && body[0].y == body[i].y)
+            return true;
+    }
+    return false;
+}

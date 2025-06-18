@@ -7,13 +7,15 @@ const int WIDTH = 40;
 const int HEIGHT = 20;
 const int INITIAL_LENGTH = 9;
 
-struct Position {
+struct Position
+{
     int x, y;
 };
 
-class Snake {
+class Snake
+{
 private:
-    bool grid[HEIGHT][WIDTH] = {false};
+    bool grid[HEIGHT][WIDTH] = {};
     void updateHeadSymbol();
 
 public:
@@ -23,9 +25,10 @@ public:
     char head_symbol;
 
     Snake();
-    bool move(const Position& food_pos);
-    void draw(WINDOW* win) const;
+    bool move(const Position &food_pos);
+    void draw(WINDOW *win) const;
     void changeDirection(int ch);
+    bool hasCollidedWithSelf();
 };
 
 #endif
