@@ -17,8 +17,10 @@ class Score
 {
 private:
     char nomegiocatore[20]; // Nome del giocatore
+                            // Finestra per la classifica
 
 public:
+    WINDOW *score_win;
     Scoretable scoretablearray[10];
     Score(); // Costruttore
     // Array di strutture per i punteggi
@@ -27,6 +29,9 @@ public:
     void saveScoreInFile();
     void addScore(char name[], int punteggio); // Funzione per salvare i punteggi nell'array
     void visualizzaClassifica();               // funzione per visualizzare la classifica
+    void resetScoreWindow();
+    void dispalyScoreWindow(const std::string &filename); // Disegna la finestra della classifica
+    int bonusInBaseAlLivello(int livello);
 };
 
 // sort()ordina, legge dal file e salva nella struttura ,  saveScoreInFile(); ho nome e score e salvo nella mia struct,

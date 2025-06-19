@@ -19,11 +19,15 @@
 class Game
 {
 private:
+    Menu menu;
     Snake snake;
     Food food;
+    Score scoreManager;
     int score = 0;
     int delay = 100;
     int moveDelay;
+    int livello;
+    StatoGioco currentState;
     std::string playerName;
     WINDOW *board_win;
 
@@ -31,7 +35,11 @@ public:
     Game(int livello, std::string nome);
     ~Game();
     void run();
-    void showGameOverMenu();
+    void mainMenu();
+    void scoreTableMenu();
+    void gameLoop();
+    void deleteBoardWin();
+    void speedDelay();
 };
 
 #endif

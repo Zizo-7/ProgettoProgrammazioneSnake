@@ -3,6 +3,11 @@
 // costruttore
 Score::Score()
 {
+    // Inizializza la finestra della classifica
+    int maxHeigth, maxWidth;
+    getmaxyx(stdscr, maxHeigth, maxWidth);
+    this->score_win = newwin(maxHeigth, maxWidth, 0, 0);
+
     // Inizializza l'array di punteggi a zero
     for (int i = 0; i < 10; i++)
     {
@@ -92,4 +97,63 @@ void Score::visualizzaClassifica()
         mvprintw(i + 1, 0, "%d. %s - %d", i + 1, this->scoretablearray[i].nome, this->scoretablearray[i].score);
     }
     refresh();
+}
+void Score::resetScoreWindow()
+{
+    // Resetta la finestra della classifica
+    werase(this->score_win);
+    wrefresh(this->score_win);
+
+    refresh();
+}
+
+void Score::dispalyScoreWindow(const std::string &filename)
+{
+    wclear(this->score_win);
+    // box(this->menuwin, 0, 0);
+
+    std::ifstream file(filename);
+    if (!file.is_open())
+    {
+        mvwprintw(this->score_win, 1, 1, "Error opening file");
+        wrefresh(this->score_win);
+        return;
+    }
+
+    box(this->score_win, 0, 0);
+
+    int width = getmaxx(this->score_win);
+    int hight = getmaxy(this->score_win);
+
+    std::string line;
+    mvwprintw(this->score_win, 3, (width / 2) - 5, "SCORE TABLE");
+    mvwprintw(this->score_win, (hight - 13), (width / 2) - 9, "click 'b' to go back");
+    int row = 1;
+    while (std::getline(file, line))
+    {
+        mvwprintw(this->score_win, row + 7, (width / 2) - 4, line.c_str());
+        row += 3;
+    }
+    file.close();
+    wrefresh(this->score_win);
+}
+
+int Score::bonusInBaseAlLivello(int livello)
+{
+    // Restituisce il bonus in base al livello
+    switch (livello)
+    {
+    case 1:
+        return 0;
+    case 2:
+        return 3;
+    case 3:
+        return 6;
+    case 4:
+        return 9;
+    case 5:
+        return 12;
+    default:
+        return 0; // Livello non valido, nessun bonus
+    }
 }

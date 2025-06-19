@@ -8,51 +8,7 @@ struct LivelloNode
     LivelloNode *next;
 };
 
-void Game::showGameOverMenu()
-{
-    clear();
-    mvprintw(10, 40, "GAME OVER");
-    mvprintw(12, 40, "Score: %d", score);
-    mvprintw(14, 40, "Premi S per ricominciare");
-    mvprintw(15, 40, "Premi T per vedere la classifica");
-    mvprintw(16, 40, "Premi Q per uscire");
-    refresh();
-
-    Score scoreManager;
-    scoreManager.readScoreFromFileAndSaveInScoreTable("scoretable.txt");
-    scoreManager.addScore((char *)playerName.c_str(), score);
-    scoreManager.saveScoreInFile();
-
-    int ch;
-    while (true)
-    {
-        ch = getch();
-        if (ch == 's' || ch == 'S')
-        {
-            Input input;
-            input.inserisci_nome();
-            input.seleziona_livello();
-            Game newGame(input.getLivello(), input.getNome());
-            newGame.run();
-            break;
-        }
-        else if (ch == 't' || ch == 'T')
-        {
-            scoreManager.visualizzaClassifica();
-            mvprintw(20, 40, "Premi un tasto per tornare al menu...");
-            refresh();
-            getch();
-            showGameOverMenu();
-            break;
-        }
-        else if (ch == 'q' || ch == 'Q')
-        {
-            break;
-        }
-    }
-}
-
-Game::Game(int livello, std::string nome)
+Game::Game(int livello = 1, std::string nome = "Player")
 {
     srand(time(NULL));
     initscr();
@@ -63,59 +19,11 @@ Game::Game(int livello, std::string nome)
     nodelay(stdscr, TRUE);
     start_color();
     init_pair(1, COLOR_RED, COLOR_BLACK);
-
-    board_win = newwin(HEIGHT, WIDTH, 15, 100);
-    box(board_win, 0, 0);
-    wrefresh(board_win);
-    // Inizializza la lista dei livelli
-    LivelloNode livello1 = {1, 10, nullptr, nullptr};
-    LivelloNode livello2 = {2, 8, &livello1, nullptr};
-    LivelloNode livello3 = {3, 6, &livello2, nullptr};
-    LivelloNode livello4 = {4, 4, &livello3, nullptr};
-    LivelloNode livello5 = {5, 2, &livello4, nullptr};
-    livello1.next = &livello2;
-    livello2.next = &livello3;
-    livello3.next = &livello4;
-    livello4.next = &livello5;
-
-    // Trova il nodo corrispondente al livello richiesto
-    LivelloNode *ptr = &livello1;
-    while (ptr != nullptr && ptr->livello != livello)
-    {
-        ptr = ptr->next;
-    }
-    if (ptr != nullptr)
-    {
-        this->moveDelay = ptr->moveDelay;
-    }
-    else
-    {
-        this->moveDelay = 10; // valore di default
-    }
-
+    this->score = 0;
+    scoreManager.readScoreFromFileAndSaveInScoreTable("scoretable.txt");
+    this->livello = livello;
     this->playerName = nome;
-
-    /*switch (livello)
-    {
-    case 1:
-        moveDelay = 10; // lento
-        break;
-    case 2:
-        moveDelay = 8; // normale
-        break;
-    case 3:
-        moveDelay = 6; // veloce
-        break;
-    case 4:
-        moveDelay = 4; // rapidissima
-        break;
-    case 5:
-        moveDelay = 2; // massima
-        break;
-    default:
-        moveDelay = 10; // default normale
-        break;
-    }*/
+    this->currentState = MENU;
 }
 
 Game::~Game()
@@ -125,8 +33,77 @@ Game::~Game()
 
 void Game::run()
 {
+    while (true)
+    {
+        switch (currentState)
+        {
+        case MENU:
+            mainMenu();
+            break;
+        case GIOCO:
+            gameLoop();
+            break;
+        case TABELLA_PUNTEGGI:
+            scoreTableMenu();
+            break;
+        case ESCI:
+            return; // Esce dal gioco
+        default:
+            break;
+        }
+    }
+}
 
-    timeout(10); // molto reattivo
+void Game::mainMenu()
+{
+    menu.visualizza_menu();
+    int ch = getch();
+    if (ch == 's')
+    {
+        this->currentState = GIOCO;
+    }
+    else if (ch == 't')
+    {
+        this->currentState = TABELLA_PUNTEGGI;
+    }
+    else if (ch == 'q')
+    {
+        this->currentState = ESCI;
+    }
+}
+void Game::scoreTableMenu()
+{
+    menu.reset_menuWindow();
+    scoreManager.dispalyScoreWindow("scoretable.txt");
+    refresh();
+    int ch = wgetch(scoreManager.score_win);
+    if (ch == 'b')
+    {
+        scoreManager.resetScoreWindow();
+        this->currentState = MENU;
+    }
+}
+
+void Game::gameLoop()
+{
+    menu.reset_menuWindow();
+    Input input;
+    input.inserisci_nome();
+    this->playerName = input.getNome();
+
+    input.seleziona_livello();
+    this->livello = input.getLivello();
+    speedDelay(); // Imposta il delay in base al livello
+
+    int frutta_valore = this->livello;
+    bool isGameOver = false;
+    refresh();
+    getch();
+    this->board_win = newwin(HEIGHT, WIDTH, 15, 100);
+    box(board_win, 0, 0);
+    wrefresh(this->board_win);
+
+    timeout(moveDelay); // molto reattivo
     int tick = 0;
     // più basso = più veloce
     /*come ho fatto, la funzione timeout(10) -> ogni 10 ms fa un esecuzione, se timeout è 100 allora è troppo lento
@@ -138,12 +115,24 @@ void Game::run()
     Timer timer(1); // Crea un timer di 3 minuti
     timer.start();  // Avvia il timer
 
-    while (true)
+    while (this->currentState == GIOCO && !isGameOver)
     {
-        timer.draw(0, 0); // Disegna il timer a schermo alla posizione (0, 0)
+
+        timer.draw(); // Disegna il timer a schermo alla posizione (0, 0)
         int ch = getch();
         if (ch == 'q')
-            break;
+        {
+            scoreManager.addScore((char *)playerName.c_str(), this->score);
+            scoreManager.saveScoreInFile();
+            scoreManager.readScoreFromFileAndSaveInScoreTable("scoretable.txt");
+            scoreManager.SortScoretable();
+            this->score = 0; // Resetta il punteggio
+            timer.undraw();  // Resetta il timer
+            deleteBoardWin();
+            this->currentState = MENU;
+            isGameOver = true;
+        }
+
         if (ch == KEY_UP && snake.dy == 0)
         {
             snake.dx = 0;
@@ -169,16 +158,24 @@ void Game::run()
         {
             bool growing = snake.move(food.pos);
 
-            if (snake.hasCollidedWithSelf()) // hasCollidedWithSelf() NON FUNZIONA CORRETTAMENTE
+            if (snake.hasCollidedWithSelf())
             {
-                showGameOverMenu();
-                break;
+                scoreManager.addScore((char *)playerName.c_str(), this->score);
+                scoreManager.saveScoreInFile();
+                scoreManager.readScoreFromFileAndSaveInScoreTable("scoretable.txt");
+                scoreManager.SortScoretable();
+                this->score = 0; // Resetta il punteggio
+
+                timer.undraw(); // Resetta il timer
+                deleteBoardWin();
+                this->currentState = MENU;
+                isGameOver = true;
             }
 
             if (growing)
             {
                 food.generate();
-                score++;
+                score = score + frutta_valore;
             }
 
             werase(board_win);
@@ -192,159 +189,54 @@ void Game::run()
 
         if (timer.isExpired())
         {
-            showGameOverMenu();
-            break;
+            this->score += scoreManager.bonusInBaseAlLivello(this->livello);
+            scoreManager.addScore((char *)playerName.c_str(), this->score);
+            scoreManager.saveScoreInFile();
+            scoreManager.readScoreFromFileAndSaveInScoreTable("scoretable.txt");
+            scoreManager.SortScoretable();
+            this->score = 0; // Resetta il punteggio
+            timer.undraw();  // Resetta il timer
+            deleteBoardWin();
+            this->currentState = MENU;
+            isGameOver = true;
         }
 
         tick++;
     }
 }
-
-/*void Game::showGameOverMenu()
+void Game::deleteBoardWin()
 {
-    clear();
-    mvprintw(10, 40, "GAME OVER");
-    mvprintw(12, 40, "Score: %d", score);
-    mvprintw(14, 40, "Premi S per ricominciare");
-    mvprintw(15, 40, "Premi T per vedere la classifica");
-    mvprintw(16, 40, "Premi Q per uscire");
-    refresh();
-
-    Score scoreManager;
-    scoreManager.readScoreFromFileAndSaveInScoreTable("scoretable.txt");
-    scoreManager.addScore((char *)playerName.c_str(), score);
-    scoreManager.saveScoreInFile();
-
-    int ch;
-    while (true)
-    {
-        ch = getch();
-        if (ch == 's' || ch == 'S')
-        {
-            Input input;
-            input.inserisci_nome();
-            input.seleziona_livello();
-            Game newGame(input.livello, input.getNome());
-            newGame.run();
-            break;
-        }
-        else if (ch == 't' || ch == 'T')
-        {
-            scoreManager.visualizzaClassifica();
-            mvprintw(20, 40, "Premi un tasto per tornare al menu...");
-            refresh();
-            getch();
-            showGameOverMenu();
-            break;
-        }
-        else if (ch == 'q' || ch == 'Q')
-        {
-            break;
-        }
-    }
-}
-
-Game::Game(int livello)
-{
-    srand(time(NULL));
-    initscr();
-    noecho();
-    cbreak();
-    curs_set(FALSE);
-    keypad(stdscr, TRUE);
-    nodelay(stdscr, TRUE);
-    start_color();
-    init_pair(1, COLOR_RED, COLOR_BLACK);
-
-    board_win = newwin(HEIGHT, WIDTH, 15, 100);
-    box(board_win, 0, 0);
+    werase(board_win);
     wrefresh(board_win);
+    delwin(board_win);
+    board_win = nullptr;
+    refresh();
+}
+void Game::speedDelay()
+{
+    // Inizializza la lista dei livelli
+    LivelloNode livello1 = {1, 10, nullptr, nullptr};
+    LivelloNode livello2 = {2, 8, &livello1, nullptr};
+    LivelloNode livello3 = {3, 6, &livello2, nullptr};
+    LivelloNode livello4 = {4, 4, &livello3, nullptr};
+    LivelloNode livello5 = {5, 2, &livello4, nullptr};
+    livello1.next = &livello2;
+    livello2.next = &livello3;
+    livello3.next = &livello4;
+    livello4.next = &livello5;
 
-    switch (livello)
+    // Trova il nodo corrispondente al livello richiesto
+    LivelloNode *ptr = &livello1;
+    while (ptr != nullptr && ptr->livello != this->livello)
     {
-    case 1:
-        moveDelay = 10; // lento
-        break;
-    case 2:
-        moveDelay = 8; // normale
-        break;
-    case 3:
-        moveDelay = 6; // veloce
-        break;
-    case 4:
-        moveDelay = 4; // rapidissima
-        break;
-    case 5:
-        moveDelay = 2; // massima
-        break;
-    default:
-        moveDelay = 10; // default normale
-        break;
+        ptr = ptr->next;
+    }
+    if (ptr != nullptr)
+    {
+        this->moveDelay = ptr->moveDelay;
+    }
+    else
+    {
+        this->moveDelay = 10; // valore di default
     }
 }
-*/
-/*Game::~Game()
-{
-    endwin();
-}
-
-/*void Game::run()
-{
-
-    timeout(10); // molto reattivo
-    int tick = 0;
-    // più basso = più veloce
-    /*come ho fatto, la funzione timeout(10) -> ogni 10 ms fa un esecuzione, se timeout è 100 allora è troppo lento
-     * mentre se timeout è 10 ci sono troppi cicli e quindi a prescindere risulta lento
-     * usiamo un metodo con tick e move delay, dove tick conta i cicli, e ogni tot cicli (in base a move delay) verrà avviato un ciclo
-     * non usando questo modo, il codice va fuori controllo e risulta più lento di prima
-     * 12: lento, 8 normale, 4 veloce, 2 rapidissima, 1 massima
-     */
-
-/* while (true)
- {
-     int ch = getch();
-     if (ch == 'q')
-         break;
-     if (ch == KEY_UP && snake.dy == 0)
-     {
-         snake.dx = 0;
-         snake.dy = -1;
-     }
-     if (ch == KEY_DOWN && snake.dy == 0)
-     {
-         snake.dx = 0;
-         snake.dy = 1;
-     }
-     if (ch == KEY_LEFT && snake.dx == 0)
-     {
-         snake.dx = -1;
-         snake.dy = 0;
-     }
-     if (ch == KEY_RIGHT && snake.dx == 0)
-     {
-         snake.dx = 1;
-         snake.dy = 0;
-     }
-
-     if (tick % moveDelay == 0)
-     {
-         if (snake.move(food.pos))
-         {
-             food.generate();
-
-             score++;
-         }
-
-         werase(board_win);
-         box(board_win, 0, 0);
-         food.draw(board_win);
-         snake.draw(board_win);
-         mvprintw(13, 100, "Score: %d", score);
-         wrefresh(board_win);
-         refresh();
-     }
-
-     tick++;
- }
-}*/

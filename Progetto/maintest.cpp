@@ -8,80 +8,90 @@
 
 int main()
 {
-
     initscr();
     noecho();
     curs_set(0);
     keypad(stdscr, TRUE);
     cbreak();
-    // nodelay(stdscr, TRUE);
 
-    // visualizzare il menu principale
-    Menu menu;
-    char choice = menu.visualizza_menu();
-    if (choice == 'q')
-    {
-        endwin(); // Chiude ncurses se l'utente sceglie di uscire
-        return 0; // Esce dal programma
-    }
-    if (choice == 't')
-    {
-        Score score;
-        score.readScoreFromFileAndSaveInScoreTable("scoretable.txt");
-        score.visualizzaClassifica();
-        getch();
-        endwin(); // Chiude ncurses dopo la visualizzazione della classifica
-        return 0; // Esce dal programma
-    }
-    if (choice == 's')
-    {
-        wclear(stdscr);
-        refresh();
-        Input input; // chiedere nome e livello
+    Game game(1, "Player"); // Inizializza il gioco con livello 1 e nome "Player"
+    game.run();             // Avvia il gioco
 
-        input.inserisci_nome();
-        input.seleziona_livello();
-        int livello = input.getLivello();
-        // visualizzare il livello selezionato
-        std::string nomeGiocatore = input.getNome();
+    /*
+        initscr();
+        noecho();
+        curs_set(0);
+        keypad(stdscr, TRUE);
+        cbreak();
+        // nodelay(stdscr, TRUE);
 
-        wclear(stdscr);
-        refresh();
+        // visualizzare il menu principale
+        Menu menu;
+        char choice = menu.visualizza_menu();
+        if (choice == 'q')
+        {
+            endwin(); // Chiude ncurses se l'utente sceglie di uscire
+            return 0; // Esce dal programma
+        }
+        if (choice == 't')
+        {
+            Score score;
+            score.readScoreFromFileAndSaveInScoreTable("scoretable.txt");
+            score.visualizzaClassifica();
+            getch();
+            endwin(); // Chiude ncurses dopo la visualizzazione della classifica
+            return 0; // Esce dal programma
+        }
+        if (choice == 's')
+        {
+            wclear(stdscr);
+            refresh();
+            Input input; // chiedere nome e livello
 
-        Game game(livello, nomeGiocatore);
-        // test schermata gameover
-        // game.showGameOverMenu();   funziona benissimo
-        game.run();
-    }
+            input.inserisci_nome();
+            input.seleziona_livello();
+            int livello = input.getLivello();
+            // visualizzare il livello selezionato
+            std::string nomeGiocatore = input.getNome();
 
-    // Crea e avvia il timer (3 minuti di default)
-    /* Timer timer;   // Crea timer di 3 minuti
-     timer.start(); // Avvia il timer
+            wclear(stdscr);
+            refresh();
 
-     while (!timer.isExpired())
-     {
-         clear();          // Pulisce schermo
-         timer.draw(0, 0); // Mostra timer
-         mvprintw(2, 0, "Premi 'q' per uscire.");
-         refresh(); // Aggiorna ncurses
-
-         int ch = getch(); // Legge input non bloccante
-         if (ch == 'q')
-             break; // Esce se premi 'q'
-
-         napms(100); // Attendi 100ms (≈10 FPS)
-     }
-
-     clear();
-     mvprintw(5, 5, "Tempo scaduto!");
-     mvprintw(7, 5, "Premi un tasto per uscire.");
-     refresh();*/
-
-    nodelay(stdscr, FALSE); // Rimetti getch() in modalità bloccante
-    getch();                // Attendi tasto
-    endwin();               // Chiudi ncurses
-    return 0;
+            Game game(livello, nomeGiocatore);
+            // test schermata gameover
+            // game.showGameOverMenu();   funziona benissimo
+            game.run();
+        */
 }
+
+// Crea e avvia il timer (3 minuti di default)
+/* Timer timer;   // Crea timer di 3 minuti
+ timer.start(); // Avvia il timer
+
+ while (!timer.isExpired())
+ {
+     clear();          // Pulisce schermo
+     timer.draw(0, 0); // Mostra timer
+     mvprintw(2, 0, "Premi 'q' per uscire.");
+     refresh(); // Aggiorna ncurses
+
+     int ch = getch(); // Legge input non bloccante
+     if (ch == 'q')
+         break; // Esce se premi 'q'
+
+     napms(100); // Attendi 100ms (≈10 FPS)
+ }
+
+ clear();
+ mvprintw(5, 5, "Tempo scaduto!");
+ mvprintw(7, 5, "Premi un tasto per uscire.");
+ refresh();*/
+
+// nodelay(stdscr, FALSE); // Rimetti getch() in modalità bloccante
+// getch();                // Attendi tasto
+// endwin();               // Chiudi ncurses
+// return 0;
+// }
 
 /*int main()
 {

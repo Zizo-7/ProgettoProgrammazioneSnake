@@ -11,6 +11,7 @@ class Timer
 private:
     time_t startTime;
     int durationSeconds;
+    WINDOW *boxwin; // Finestra per il timer
 
 public:
     Timer(int minutes = 3); // Default: 3 minuti
@@ -19,5 +20,6 @@ public:
 
     // const indica che questa funzione non modifica l'oggetto
     bool isExpired() const;
-    void draw(int y, int x) const; // stampa il timer a posizione (y, x)
+    void draw() const; // stampa il timer a posizione (y, x)
+    void undraw();     // Resetta il timer
 };

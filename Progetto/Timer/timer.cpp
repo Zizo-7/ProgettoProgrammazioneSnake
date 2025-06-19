@@ -7,6 +7,7 @@ Timer::Timer(int minutes) // Costruttore: imposta la durata del timer in secondi
 {
     durationSeconds = minutes * 60;
     startTime = 0;
+    boxwin = nullptr; // Inizializza la finestra a nullptr
 }
 
 // Avvia il timer salvando il tempo corrente
@@ -33,11 +34,11 @@ bool Timer::isExpired() const
     return getRemainingSeconds() <= 0;
 }
 // Disegna il timer a schermo alla posizione (y, x)
-void Timer::draw(int y, int x) const
+void Timer::draw() const
 {
 
     // Crea una finestra 4 righe x 20 colonne
-    WINDOW *boxwin = newwin(4, 20, y, x);
+    WINDOW *boxwin = newwin(4, 20, 0, 0);
     box(boxwin, 0, 0); // Disegna la cornice
 
     int remaining = getRemainingSeconds();
@@ -46,5 +47,16 @@ void Timer::draw(int y, int x) const
     // Formatta il tempo come MM:SS
     char buffer[16];
     snprintf(buffer, sizeof(buffer), "Timer: %02d:%02d", minutes, seconds);
-    mvprintw(y, x, "%s", buffer);
+    mvprintw(0, 0, "%s", buffer);
+}
+
+void Timer::undraw()
+{
+    if (boxwin != nullptr)
+    {
+        delwin(boxwin);   // Elimina la finestra del timer
+        boxwin = nullptr; // Imposta a nullptr per evitare doppie eliminazioni
+    }
+    clear();   // Pulisce lo schermo
+    refresh(); // Aggiorna lo schermo
 }

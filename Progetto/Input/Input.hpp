@@ -13,5 +13,5 @@ public:
     void inserisci_nome();
     void seleziona_livello();
     int getLivello() const;
-    std::string getNome() const { return std::string(nomeGiocatore); }
+    std::string getNome() const;
 };
