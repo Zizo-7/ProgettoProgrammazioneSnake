@@ -1,10 +1,10 @@
 Luigi 200
 Peach 150
 Mario 100
- 1
-0 0
-0 0
-0 0
-0 0
-0 0
-  0
+ss 4
+sssd 1
+sssd 1
+sssd 1
+sssd 1
+sssd 1
+sssd 1

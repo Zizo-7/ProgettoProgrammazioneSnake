@@ -39,11 +39,7 @@ bool Snake::move(const Position &food_pos)
     if (new_head.y >= HEIGHT - 1)
         new_head.y = 1;
 
-    // Verifica collisione PRIMA di cancellare la coda
-    if (grid[new_head.y][new_head.x])
-        return false;
-
-    // Rimuove la coda dalla griglia
+      // Rimuove la coda dalla griglia
     Position tail = body[length - 1];
     grid[tail.y][tail.x] = false;
 
