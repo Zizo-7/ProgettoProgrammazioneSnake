@@ -26,7 +26,6 @@ private:
     int moveDelay;
     std::string playerName;
     WINDOW *board_win;
-    StatoGioco currentState;
 
 public:
     Game(int livello, std::string nome);

@@ -1,5 +1,12 @@
 
 #include "game.hpp"
+struct LivelloNode
+{
+    int livello;
+    int moveDelay;
+    LivelloNode *prev;
+    LivelloNode *next;
+};
 
 void Game::showGameOverMenu()
 {
@@ -60,8 +67,35 @@ Game::Game(int livello, std::string nome)
     board_win = newwin(HEIGHT, WIDTH, 15, 100);
     box(board_win, 0, 0);
     wrefresh(board_win);
+    // Inizializza la lista dei livelli
+    LivelloNode livello1 = {1, 10, nullptr, nullptr};
+    LivelloNode livello2 = {2, 8, &livello1, nullptr};
+    LivelloNode livello3 = {3, 6, &livello2, nullptr};
+    LivelloNode livello4 = {4, 4, &livello3, nullptr};
+    LivelloNode livello5 = {5, 2, &livello4, nullptr};
+    livello1.next = &livello2;
+    livello2.next = &livello3;
+    livello3.next = &livello4;
+    livello4.next = &livello5;
 
-    switch (livello)
+    // Trova il nodo corrispondente al livello richiesto
+    LivelloNode *ptr = &livello1;
+    while (ptr != nullptr && ptr->livello != livello)
+    {
+        ptr = ptr->next;
+    }
+    if (ptr != nullptr)
+    {
+        this->moveDelay = ptr->moveDelay;
+    }
+    else
+    {
+        this->moveDelay = 10; // valore di default
+    }
+
+    this->playerName = nome;
+
+    /*switch (livello)
     {
     case 1:
         moveDelay = 10; // lento
@@ -81,7 +115,7 @@ Game::Game(int livello, std::string nome)
     default:
         moveDelay = 10; // default normale
         break;
-    }
+    }*/
 }
 
 Game::~Game()

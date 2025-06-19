@@ -1,7 +1,7 @@
 Luigi 200
 Peach 150
 Mario 100
- 11
+ 1
 0 0
 0 0
 0 0
