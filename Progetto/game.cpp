@@ -10,6 +10,7 @@ struct LivelloNode
 
 Game::Game(int livello = 1, std::string nome = "Player")
 {
+
     srand(time(NULL));
     initscr();
     noecho();
@@ -105,13 +106,7 @@ void Game::gameLoop()
 
     timeout(moveDelay); // molto reattivo
     int tick = 0;
-    // più basso = più veloce
-    /*come ho fatto, la funzione timeout(10) -> ogni 10 ms fa un esecuzione, se timeout è 100 allora è troppo lento
-     * mentre se timeout è 10 ci sono troppi cicli e quindi a prescindere risulta lento
-     * usiamo un metodo con tick e move delay, dove tick conta i cicli, e ogni tot cicli (in base a move delay) verrà avviato un ciclo
-     * non usando questo modo, il codice va fuori controllo e risulta più lento di prima
-     * 12: lento, 8 normale, 4 veloce, 2 rapidissima, 1 massima
-     */
+
     Timer timer(1); // Crea un timer di 3 minuti
     timer.start();  // Avvia il timer
 
@@ -215,11 +210,11 @@ void Game::deleteBoardWin()
 void Game::speedDelay()
 {
     // Inizializza la lista dei livelli
-    LivelloNode livello1 = {1, 10, nullptr, nullptr};
-    LivelloNode livello2 = {2, 8, &livello1, nullptr};
-    LivelloNode livello3 = {3, 6, &livello2, nullptr};
-    LivelloNode livello4 = {4, 4, &livello3, nullptr};
-    LivelloNode livello5 = {5, 2, &livello4, nullptr};
+    LivelloNode livello1 = {1, 12, nullptr, nullptr};
+    LivelloNode livello2 = {2, 10, &livello1, nullptr};
+    LivelloNode livello3 = {3, 8, &livello2, nullptr};
+    LivelloNode livello4 = {4, 6, &livello3, nullptr};
+    LivelloNode livello5 = {5, 4, &livello4, nullptr};
     livello1.next = &livello2;
     livello2.next = &livello3;
     livello3.next = &livello4;
