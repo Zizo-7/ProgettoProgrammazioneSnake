@@ -1,10 +1,10 @@
 dario 52
 Zizo 32
+Giorgio 14
+zizo 12
 primo 9
+primo 8
+complesso 5
+difficile 5
 marco 4
-0 0
-0 0
-0 0
-0 0
-0 0
 0 0
